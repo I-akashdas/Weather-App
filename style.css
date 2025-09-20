@@ -1,0 +1,134 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: #2c3e50;
+  color: #fff;
+}
+
+.weather-container {
+  background: rgba(0, 0, 0, 0.4);
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+  width: 90%;
+  max-width: 450px;
+  text-align: center;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+h1 {
+  font-size: 2em;
+  margin-bottom: 20px;
+}
+
+.search-box {
+  position: relative;
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+#city-input {
+  flex-grow: 1;
+  border: none;
+  outline: none;
+  padding: 15px;
+  border-radius: 30px;
+  font-size: 1em;
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #333;
+}
+
+#search-btn {
+  border: none;
+  outline: none;
+  padding: 15px 20px;
+  border-radius: 30px;
+  background: #ff7675;
+  color: white;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#search-btn:hover {
+  background: #d63031;
+}
+
+#suggestions-box {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-height: 200px;
+  overflow-y: auto;
+  background: white;
+  border-radius: 10px;
+  margin-top: 5px;
+  z-index: 10;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.suggestion-item {
+  padding: 10px 15px;
+  color: #333;
+  cursor: pointer;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.suggestion-item:last-child {
+  border-bottom: none;
+}
+
+.suggestion-item:hover {
+  background-color: #f0f0f0;
+}
+
+#weather-icon {
+  width: 150px;
+  margin: 10px 0;
+}
+
+#temperature {
+  font-size: 3.5em;
+  font-weight: 600;
+}
+
+#description {
+  font-size: 1.5em;
+  text-transform: capitalize;
+  margin-top: -10px;
+  margin-bottom: 20px;
+}
+
+.details {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-top: 20px;
+  background-color: rgba(0, 0, 0, 0.2);
+  padding: 15px;
+  border-radius: 10px;
+}
+
+.details p {
+  font-size: 1em;
+  margin: 5px 0;
+}
+
+.hide {
+  display: none;
+}
