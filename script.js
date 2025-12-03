@@ -7,14 +7,13 @@ document.documentElement.setAttribute("data-theme", theme);
 document.getElementById("unitToggle").innerText =
   units === "metric" ? "°C" : "°F";
 
-// Theme toggle
+
 document.getElementById("themeToggle").onclick = () => {
   theme = theme === "light" ? "dark" : "light";
   localStorage.setItem("theme", theme);
   document.documentElement.setAttribute("data-theme", theme);
 };
 
-// Unit toggle
 document.getElementById("unitToggle").onclick = () => {
   units = units === "metric" ? "imperial" : "metric";
   localStorage.setItem("units", units);
@@ -23,15 +22,15 @@ document.getElementById("unitToggle").onclick = () => {
   getWeather();
 };
 
-// Search button
+
 document.getElementById("searchBtn").onclick = getWeather;
 
-// Enter key
+
 document.getElementById("cityInput").addEventListener("keypress", (e) => {
   if (e.key === "Enter") getWeather();
 });
 
-// MAIN FUNCTION
+
 async function getWeather() {
   let city = document.getElementById("cityInput").value.trim();
   if (!city) city = "New Delhi";
@@ -55,7 +54,7 @@ async function getWeather() {
   getAQI(lat, lon);
 }
 
-// Display Current Weather
+
 function displayCurrent(d) {
   document.getElementById("cityName").innerText = `${d.name}, ${d.sys.country}`;
   document.getElementById("temperature").innerText =
@@ -71,7 +70,6 @@ function displayCurrent(d) {
   applyBg(d.weather[0].main.toLowerCase());
 }
 
-// Weather based BG
 function applyBg(cond) {
   document.body.className = "";
   if (cond.includes("rain")) document.body.classList.add("rainy");
@@ -80,7 +78,7 @@ function applyBg(cond) {
   if (cond.includes("clear")) document.body.classList.add("sunny");
 }
 
-// HOURLY
+
 async function getHourly(lat, lon) {
   const URL = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=${units}`;
   const res = await fetch(URL);
@@ -104,7 +102,7 @@ async function getHourly(lat, lon) {
   });
 }
 
-// DAILY
+
 async function getForecast(lat, lon) {
   const URL = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=${units}`;
   const res = await fetch(URL);
@@ -139,7 +137,6 @@ async function getForecast(lat, lon) {
     });
 }
 
-// REAL AQI
 async function getAQI(lat, lon) {
   const res = await fetch(
     `https://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${API_KEY}`
@@ -152,7 +149,7 @@ async function getAQI(lat, lon) {
   document.getElementById("aqi").innerText = aqi;
 }
 
-// AQI conversion
+
 function convertAQI(pm) {
   if (pm <= 30) return scale(pm, 0, 30, 0, 50);
   if (pm <= 60) return scale(pm, 31, 60, 51, 100);
@@ -167,7 +164,6 @@ function scale(C, lo, hi, aqLo, aqHi) {
   return Math.round(((aqHi - aqLo) / (hi - lo)) * (C - lo) + aqLo);
 }
 
-// default load
 getWeather();
 
 
