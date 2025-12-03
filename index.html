@@ -1,42 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weather App</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather App</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="weather-container">
-        <h1>Weather Finder</h1>
-        <div class="search-box">
-            <input type="text" id="city-input" placeholder="Enter city name..." autocomplete="off">
-            <button id="search-btn">Search</button>
-            <div id="suggestions-box"></div>
-        </div>
 
-        <div id="weather-info" class="hide">
-            <img id="weather-icon" src="" alt="Weather Icon">
-            <h2 id="city-name"></h2>
-            <p id="temperature"></p>
-            <p id="description"></p>
-            <div class="details">
-                <div>
-                    <p>Humidity</p>
-                    <p id="humidity"></p>
-                </div>
-                <div>
-                    <p>Wind Speed</p>
-                    <p id="wind-speed"></p>
-                </div>
-            </div>
-        </div>
+  <div class="app">
 
-         <div id="error-message" class="hide">
-            <p>City not found. Please try again.</p>
-        </div>
-    </div>
+    <header>
+      <h1>Weather Application</h1>
 
-    <script src="script.js"></script>
+      <div class="search-area">
+        <input type="text" id="cityInput" placeholder="Enter city...">
+        <button id="searchBtn">Search</button>
+      </div>
+
+      <div class="controls">
+        <button id="unitToggle">°C</button>
+        <button id="themeToggle">🌙</button>
+      </div>
+    </header>
+
+    <!-- CURRENT WEATHER -->
+    <section id="current">
+      <h2 id="cityName"></h2>
+      <div class="temp-block">
+        <img id="icon" src="" alt="">
+        <h1 id="temperature"></h1>
+      </div>
+      <p id="weatherText"></p>
+
+      <div class="mini-stats">
+        <p><b>Humidity:</b> <span id="humidity"></span>%</p>
+        <p><b>Wind:</b> <span id="wind"></span></p>
+        <p><b>AQI:</b> <span id="aqi"></span></p>
+      </div>
+    </section>
+
+    <!-- HOURLY -->
+    <section class="hour-section">
+      <h2>Hourly Forecast</h2>
+      <div class="hourly-cards" id="hourly"></div>
+    </section>
+
+    <!-- FORECAST -->
+    <section class="forecast-section">
+      <h2>5-Day Forecast</h2>
+      <div class="forecast-cards" id="forecast"></div>
+    </section>
+
+  </div>
+
+<script src="script.js"></script>
 </body>
 </html>
