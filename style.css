@@ -1,134 +1,154 @@
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+:root {
+    --bg-light: linear-gradient(135deg, #f8e9e9, #e7f1ff);
+    --bg-dark: linear-gradient(135deg, #1f1c2c, #928dab);
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Poppins", sans-serif;
+    --text-light: #000;
+    --text-dark: #fff;
+
+    --card-light: rgba(255, 255, 255, 0.45);
+    --card-dark: rgba(0, 0, 0, 0.45);
+}
+
+[data-theme="light"] {
+    --bg: var(--bg-light);
+    --text: var(--text-light);
+    --card: var(--card-light);
+}
+
+[data-theme="dark"] {
+    --bg: var(--bg-dark);
+    --text: var(--text-dark);
+    --card: var(--card-dark);
 }
 
 body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background: #2c3e50;
-  color: #fff;
+    margin: 0;
+    font-family: "Poppins", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    transition: .4s;
 }
 
-.weather-container {
-  background: rgba(0, 0, 0, 0.4);
-  padding: 30px;
-  border-radius: 20px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
-  width: 90%;
-  max-width: 450px;
-  text-align: center;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+.app {
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
 }
 
-h1 {
-  font-size: 2em;
-  margin-bottom: 20px;
+/* Header */
+header {
+    text-align: center;
 }
 
-.search-box {
-  position: relative;
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
+.search-area {
+    margin: 10px 0;
 }
 
-#city-input {
-  flex-grow: 1;
-  border: none;
-  outline: none;
-  padding: 15px;
-  border-radius: 30px;
-  font-size: 1em;
-  background-color: rgba(255, 255, 255, 0.9);
-  color: #333;
+input {
+    padding: 10px 15px;
+    border-radius: 10px;
+    border: none;
 }
 
-#search-btn {
-  border: none;
-  outline: none;
-  padding: 15px 20px;
-  border-radius: 30px;
-  background: #ff7675;
-  color: white;
-  font-size: 1em;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+button {
+    padding: 10px 15px;
+    margin-left: 6px;
+    border-radius: 10px;
+    cursor: pointer;
+    background: var(--card);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-#search-btn:hover {
-  background: #d63031;
+/* Current Weather */
+#current {
+    text-align: center;
+    background: var(--card);
+    padding: 20px;
+    border-radius: 16px;
+    backdrop-filter: blur(12px);
 }
 
-#suggestions-box {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  max-height: 200px;
-  overflow-y: auto;
-  background: white;
-  border-radius: 10px;
-  margin-top: 5px;
-  z-index: 10;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+.temp-block {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
 }
 
-.suggestion-item {
-  padding: 10px 15px;
-  color: #333;
-  cursor: pointer;
-  text-align: left;
-  border-bottom: 1px solid #eee;
-}
-
-.suggestion-item:last-child {
-  border-bottom: none;
-}
-
-.suggestion-item:hover {
-  background-color: #f0f0f0;
-}
-
-#weather-icon {
-  width: 150px;
-  margin: 10px 0;
+#icon {
+    width: 75px;
 }
 
 #temperature {
-  font-size: 3.5em;
-  font-weight: 600;
+    font-size: 50px;
+    font-weight: 700;
 }
 
-#description {
-  font-size: 1.5em;
-  text-transform: capitalize;
-  margin-top: -10px;
-  margin-bottom: 20px;
+.mini-stats {
+    margin-top: 10px;
+    font-size: 14px;
 }
 
-.details {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  margin-top: 20px;
-  background-color: rgba(0, 0, 0, 0.2);
-  padding: 15px;
-  border-radius: 10px;
+/* Cards */
+.hourly-cards,
+.forecast-cards {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
 }
 
-.details p {
-  font-size: 1em;
-  margin: 5px 0;
+.card {
+    min-width: 110px;
+    background: var(--card);
+    padding: 10px;
+    text-align: center;
+    border-radius: 12px;
+    backdrop-filter: blur(12px);
 }
 
-.hide {
-  display: none;
+/* Weather Condition Backgrounds */
+.sunny {
+    background: linear-gradient(#87CEEB, #FFE87C);
+}
+
+.rainy {
+    background: linear-gradient(#4b79a1, #283e51);
+}
+
+.cloudy {
+    background: linear-gradient(#d7d2cc, #304352);
+}
+
+.snowy 
+{
+    background: linear-gradient(#e6e9f0, #eef1f5);
+}
+
+.clear 
+{
+    background: linear-gradient(#00c6ff, #0072ff);
+}
+
+#suggestions 
+{
+    background: var(--card);
+    backdrop-filter: blur(10px);
+    border-radius: 8px;
+    position: absolute;
+    width: 200px;
+    max-height: 170px;
+    overflow-y: auto;
+    display: none;
+    margin-top: 2px;
+    z-index: 1000;
+}
+
+.suggestion-item {
+    padding: 8px 10px;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.suggestion-item:hover {
+    background: rgba(255, 255, 255, 0.25);
 }
