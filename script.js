@@ -1,130 +1,173 @@
-const cityInput = document.getElementById('city-input');
-const searchBtn = document.getElementById('search-btn');
-const suggestionsBox = document.getElementById('suggestions-box');
-const weatherInfo = document.getElementById('weather-info');
-const errorMessage = document.getElementById('error-message');
+const API_KEY = "97d53d791631d6958e8262106566694f";
 
-const cityNameEl = document.getElementById('city-name');
-const weatherIconEl = document.getElementById('weather-icon');
-const temperatureEl = document.getElementById('temperature');
-const descriptionEl = document.getElementById('description');
-const humidityEl = document.getElementById('humidity');
-const windSpeedEl = document.getElementById('wind-speed');
+let units = localStorage.getItem("units") || "metric";
+let theme = localStorage.getItem("theme") || "light";
 
-const apiKey = "97d53d791631d6958e8262106566694f";
+document.documentElement.setAttribute("data-theme", theme);
+document.getElementById("unitToggle").innerText =
+  units === "metric" ? "°C" : "°F";
 
-searchBtn.addEventListener('click', () => {
-    const city = cityInput.value;
-    if (city) {
-        getWeather(city);
-        cityInput.value = '';
-        suggestionsBox.innerHTML = '';
-    }
+// Theme toggle
+document.getElementById("themeToggle").onclick = () => {
+  theme = theme === "light" ? "dark" : "light";
+  localStorage.setItem("theme", theme);
+  document.documentElement.setAttribute("data-theme", theme);
+};
+
+// Unit toggle
+document.getElementById("unitToggle").onclick = () => {
+  units = units === "metric" ? "imperial" : "metric";
+  localStorage.setItem("units", units);
+  document.getElementById("unitToggle").innerText =
+    units === "metric" ? "°C" : "°F";
+  getWeather();
+};
+
+// Search button
+document.getElementById("searchBtn").onclick = getWeather;
+
+// Enter key
+document.getElementById("cityInput").addEventListener("keypress", (e) => {
+  if (e.key === "Enter") getWeather();
 });
 
-cityInput.addEventListener('input', () => {
-    const query = cityInput.value;
-    if (query.length > 2) {
-        getCitySuggestions(query);
-    } else {
-        suggestionsBox.innerHTML = '';
-    }
-});
+// MAIN FUNCTION
+async function getWeather() {
+  let city = document.getElementById("cityInput").value.trim();
+  if (!city) city = "New Delhi";
 
+  const URL = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(
+    city
+  )}&appid=${API_KEY}&units=${units}`;
+  const res = await fetch(URL);
+  const data = await res.json();
 
-/**
- * @param {string} city - The name of the city
- */
-async function getWeather(city) {
-    const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+  if (data.cod !== 200) {
+    alert("City Not Found");
+    return;
+  }
 
-    try {
-        const response = await fetch(weatherUrl);
-        if (!response.ok) {
-            throw new Error('City not found');
-        }
-        const data = await response.json();
-        updateWeatherUI(data);
-        errorMessage.classList.add('hide');
-        weatherInfo.classList.remove('hide');
-    } catch (error) {
-        console.error("Error fetching weather:", error);
-        errorMessage.classList.remove('hide');
-        weatherInfo.classList.add('hide');
-    }
+  displayCurrent(data);
+
+  const { lat, lon } = data.coord;
+  getHourly(lat, lon);
+  getForecast(lat, lon);
+  getAQI(lat, lon);
 }
 
-/**
- * @param {object} data
- */
-function updateWeatherUI(data) {
-    cityNameEl.textContent = data.name;
-    temperatureEl.textContent = `${Math.round(data.main.temp)}°C`;
-    descriptionEl.textContent = data.weather[0].description;
-    humidityEl.textContent = `${data.main.humidity}%`;
-    windSpeedEl.textContent = `${data.wind.speed} km/h`;
+// Display Current Weather
+function displayCurrent(d) {
+  document.getElementById("cityName").innerText = `${d.name}, ${d.sys.country}`;
+  document.getElementById("temperature").innerText =
+    d.main.temp + (units === "metric" ? "°C" : "°F");
+  document.getElementById("weatherText").innerText = d.weather[0].description;
+  document.getElementById("humidity").innerText = d.main.humidity;
+  document.getElementById("wind").innerText =
+    d.wind.speed + (units === "metric" ? " m/s" : " mph");
+  document.getElementById(
+    "icon"
+  ).src = `https://openweathermap.org/img/wn/${d.weather[0].icon}@2x.png`;
 
-    const weatherMain = data.weather[0].main;
-    let iconUrl = '';
-    switch (weatherMain.toLowerCase()) {
-        case 'clear':
-            iconUrl = 'https://cdn-icons-png.flaticon.com/512/3222/3222807.png';
-            break;
-        case 'clouds':
-            iconUrl = 'https://cdn-icons-png.flaticon.com/512/7084/7084486.png';
-            break;
-        case 'rain':
-        case 'drizzle':
-            iconUrl = 'https://cdn-icons-png.flaticon.com/512/4724/4724091.png';
-            break;
-        case 'thunderstorm':
-            iconUrl = 'https://cdn-icons-png.flaticon.com/512/3104/3104612.png';
-            break;
-        case 'snow':
-            iconUrl = 'https://cdn-icons-png.flaticon.com/512/6635/6635320.png';
-            break;
-        case 'mist':
-        case 'fog':
-        case 'haze':
-            iconUrl = 'https://cdn-icons-png.flaticon.com/512/514/514240.png';
-            break;
-        default:
-            iconUrl = `https://openweathermap.org/img/wn/${data.weather[0].icon}@4x.png`;
-    }
-    weatherIconEl.src = iconUrl;
-    weatherIconEl.alt = data.weather[0].main;
+  applyBg(d.weather[0].main.toLowerCase());
 }
 
-
-/**
- * @param {string} query - The user's input string
- */
-async function getCitySuggestions(query) {
-    const geoUrl = `https://api.openweathermap.org/geo/1.0/direct?q=${query}&limit=5&appid=${apiKey}`;
-
-    try {
-        const response = await fetch(geoUrl);
-        const data = await response.json();
-        displaySuggestions(data);
-    } catch (error) {
-        console.error("Error fetching city suggestions:", error);
-    }
+// Weather based BG
+function applyBg(cond) {
+  document.body.className = "";
+  if (cond.includes("rain")) document.body.classList.add("rainy");
+  if (cond.includes("cloud")) document.body.classList.add("cloudy");
+  if (cond.includes("snow")) document.body.classList.add("snowy");
+  if (cond.includes("clear")) document.body.classList.add("sunny");
 }
 
-/**
- * @param {Array} suggestions
- */
-function displaySuggestions(suggestions) {
-    suggestionsBox.innerHTML = '';
-    suggestions.forEach(city => {
-        const div = document.createElement('div');
-        div.textContent = `${city.name}, ${city.country}`;
-        div.classList.add('suggestion-item');
-        div.addEventListener('click', () => {
-            cityInput.value = city.name;
-            suggestionsBox.innerHTML = '';
-            getWeather(city.name);
-        });
-        suggestionsBox.appendChild(div);
+// HOURLY
+async function getHourly(lat, lon) {
+  const URL = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=${units}`;
+  const res = await fetch(URL);
+  const data = await res.json();
+
+  const box = document.getElementById("hourly");
+  box.innerHTML = "";
+
+  data.list.slice(0, 8).forEach((item) => {
+    let t = item.dt_txt.split(" ")[1].slice(0, 5);
+
+    box.innerHTML += `
+      <div class="card">
+        <p>${t}</p>
+        <img src="https://openweathermap.org/img/wn/${
+          item.weather[0].icon
+        }.png">
+        <p>${item.main.temp}${units === "metric" ? "°C" : "°F"}</p>
+      </div>
+    `;
+  });
+}
+
+// DAILY
+async function getForecast(lat, lon) {
+  const URL = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=${units}`;
+  const res = await fetch(URL);
+  const data = await res.json();
+
+  const box = document.getElementById("forecast");
+  box.innerHTML = "";
+
+  let daily = {};
+
+  data.list.forEach((item) => {
+    let d = item.dt_txt.split(" ")[0];
+    if (!daily[d]) daily[d] = [];
+    daily[d].push(item);
+  });
+
+  Object.keys(daily)
+    .slice(0, 5)
+    .forEach((day) => {
+      let arr = daily[day];
+      let temps = arr.map((i) => i.main.temp);
+      let icon = arr[0].weather[0].icon;
+
+      box.innerHTML += `
+      <div class="card">
+        <p>${day}</p>
+        <img src="https://openweathermap.org/img/wn/${icon}.png">
+        <p>Min: ${Math.min(...temps)}</p>
+        <p>Max: ${Math.max(...temps)}</p>
+      </div>
+    `;
     });
 }
+
+// REAL AQI
+async function getAQI(lat, lon) {
+  const res = await fetch(
+    `https://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${API_KEY}`
+  );
+  const data = await res.json();
+
+  const pm = data.list[0].components.pm2_5;
+  let aqi = convertAQI(pm);
+
+  document.getElementById("aqi").innerText = aqi;
+}
+
+// AQI conversion
+function convertAQI(pm) {
+  if (pm <= 30) return scale(pm, 0, 30, 0, 50);
+  if (pm <= 60) return scale(pm, 31, 60, 51, 100);
+  if (pm <= 90) return scale(pm, 61, 90, 101, 200);
+  if (pm <= 120) return scale(pm, 91, 120, 201, 300);
+  if (pm <= 250) return scale(pm, 121, 250, 301, 400);
+  if (pm <= 350) return scale(pm, 251, 350, 401, 500);
+  return 500;
+}
+
+function scale(C, lo, hi, aqLo, aqHi) {
+  return Math.round(((aqHi - aqLo) / (hi - lo)) * (C - lo) + aqLo);
+}
+
+// default load
+getWeather();
+
+
